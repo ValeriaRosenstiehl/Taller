@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,7 +10,8 @@
 <body>
     <div class="container">
         <h1>Calculadora de Fibonacci y Factorial</h1>
-        <form method="post" action="">
+        <a href="menu.html">VOLVER AL MENU</a><br>
+        <form method="post" action="punto2.php">
             <label for="number">Ingrese un número:</label>
             <input type="number" id="number" name="number" required>
             <br>
@@ -21,19 +23,7 @@
             <br>
             <input type="submit" value="Calcular">
         </form>
-
-        <?php if ($result): ?>
-            <h2>Resultado:</h2>
-            <p>
-                <?php
-                if (is_array($result)) {
-                    echo "Sucesión de Fibonacci: " . implode(", ", $result);
-                } else {
-                    echo "Factorial: " . $result;
-                }
-                ?>
-            </p>
-        <?php endif; ?>
+    
     </div>
 </body>
 </html>

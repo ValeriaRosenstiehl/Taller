@@ -28,3 +28,4 @@ class Calculator {
         return $fact;
     }
 }
+?>
