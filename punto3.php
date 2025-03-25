@@ -1,69 +1,59 @@
-<?php
-session_start();
-if (!isset($_SESSION['numeros'])) {
-    $_SESSION['numeros'] = [];
-}
-if (isset($_POST['numero'])) {
-    $numero = $_POST['numero'];
-    $_SESSION['numeros'][] = $numero;
-}
-$numero_ingresado = count($_SESSION['numeros']) + 1;
-?>
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taller</title>
-</head>
+<html>
 <body>
-
-<h2>Punto 3</h2>
-
-<form method="POST">
-    <label for="numero">Ingrese el número:</label>
-    <input type="number" name="numero" id="numero" required>
-
-    <br><br>
-
-    <label for="agregar_otro">¿Desea añadir otro número?</label>
-    <select name="agregar_otro" id="agregar_otro">
-        <option value="si">Sí</option>
-        <option value="no">No</option>
-    </select>
-
-    <br><br>
-
-    <button type="submit">Enviar</button>
-</form>
+    <form method="POST">
+        <label>Ingrese números separados por coma:</label>
+        <input type="text" name="numeros" required>
+        <input type="submit" value="Calcular">
+    </form>
+    
+    <?php if ($resultados):?>
+        <div>
+            <h3>Resultados:</h3>
+            <p>Promedio: <?= $resultados['promedio'] ?></p>
+            <p>Mediana: <?= $resultados['mediana'] ?></p>
+            <p>Moda: <?= $resultados['moda'] ?></p>
+        </div>
+    <?php endif; ?>
+</body>
+</html>
 
 <?php
-if (isset($_POST['agregar_otro']) && $_POST['agregar_otro'] == 'no') {
-    echo "<h3>Números ingresados:</h3>";
-    echo "<pre>";
-    print_r($_SESSION['numeros']);
-    echo "</pre>";
-    session_unset();
-}
-// Promedio
-    $suma = 0;
-    $cont = 0;
-    foreach ($_SESSION['numeros'] as $numero){
-        $suma = $numero+$numero;
-        $cont = $cont+1;
-    }
-    $promedio = $suma/$cont;
-//Mediana
-    $orden = sort($_SESSION['numeros']);
-    if($cont%2 == 0){
-        $mediana1=$orden[($cont/2+1)];
-        $mediana2=$orden[($cont/2-1)];
 
-    }else{
-        $mediana=$orden[($cont/2+1)];
+class CalculadoraEstadistica {
+    public function calcularPromedio($numeros) {
+        return array_sum($numeros) / count($numeros);
     }
-//Moda
     
+    public function calcularMediana($numeros) {
+        sort($numeros);
+        $total = count($numeros);
+        $mitad = floor($total / 2);
+        
+        return $total % 2 == 0 
+            ? ($numeros[$mitad-1] + $numeros[$mitad]) / 2 
+            : $numeros[$mitad];
+    }
+    
+    public function calcularModa($numeros) {
+        $frecuencias = array_count_values($numeros);
+        $moda = array_keys($frecuencias, max($frecuencias));
+        return $moda[0];
+    }
+}
 
 
+$resultados = null;
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $numeros = array_map('floatval', explode(',', $_POST['numeros']));
+    $calculadora = new CalculadoraEstadistica();
+    
+    $resultados = [
+        'promedio' => $calculadora->calcularPromedio($numeros),
+        'mediana' => $calculadora->calcularMediana($numeros),
+        'moda' => $calculadora->calcularModa($numeros)
+    ];
+}
 ?>
+
+
