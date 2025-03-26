@@ -2,6 +2,8 @@
 <html>
 <body>
     <form method="POST">
+    <h1>Punto 3</h1>
+    <a href="menu.html">VOLVER AL MENU</a><br>
         <label>Ingrese números separados por coma:</label>
         <input type="text" name="numeros" required>
         <input type="submit" value="Calcular">

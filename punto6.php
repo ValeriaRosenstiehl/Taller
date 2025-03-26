@@ -7,6 +7,7 @@
 </head>
 <body>
     <h1>Punto 6</h1>
+    <a href="menu.html">VOLVER AL MENU</a><br>
     <form action="index.php" method="post">
         <label for="recorrido1">Selecciona el primer recorrido:</label>
         <select id="recorrido1" name="recorrido1">
