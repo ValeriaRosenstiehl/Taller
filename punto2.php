@@ -26,7 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <h1>Calculadora de Fibonacci y Factorial</h1>
-        <!-- <form method="post" action="">
+        <a href="menu.html">VOLVER AL MENU</a><br>
+        <form method="post" action="">
             <label for="number">Ingrese un número:</label>
             <input type="number" id="number" name="number" required>
             <br>
@@ -37,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </select>
             <br>
             <input type="submit" value="Calcular">
-        </form> -->
+        </form> 
 
             <h2>Resultado:</h2>
             <p>
@@ -49,7 +50,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 ?>
             </p>
-        <?php endif; ?>
     </div>
 </body>
 </html>
