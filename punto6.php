@@ -3,95 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Punto6</title>
+    <title>Punto 6</title>
 </head>
 <body>
     <h1>Punto 6</h1>
     <a href="menu.html">VOLVER AL MENU</a><br>
-    <form action="index.php" method="post">
-        <label for="recorrido1">Selecciona el primer recorrido:</label>
-        <select id="recorrido1" name="recorrido1">
-            <option value="preorden">Preorden</option>
-            <option value="inorden">Inorden</option>
-            <option value="postorden">Postorden</option>
-        </select><br><br>
-
-        <label for="recorrido2">Selecciona el segundo recorrido:</label>
-        <select id="recorrido2" name="recorrido2">
-            <option value="preorden">Preorden</option>
-            <option value="inorden">Inorden</option>
-            <option value="postorden">Postorden</option>
-        </select><br><br>
-
-        <label for="datos1">Introduce los valores del primer recorrido (separados por comas):</label>
-        <input type="text" id="datos1" name="datos1" required><br><br>
+    <form method="post">
+        <label for="preorder">Preorden (separados por comas):</label><br>
+        <input type="text" id="preorder" name="preorder"><br><br>
         
-        <label for="datos2">Introduce los valores del segundo recorrido (separados por comas):</label>
-        <input type="text" id="datos2" name="datos2" required><br><br>
+        <label for="inorder">Inorden (separados por comas):</label><br>
+        <input type="text" id="inorder" name="inorder"><br><br>
+        
+        <label for="postorder">Postorden (separados por comas):</label><br>
+        <input type="text" id="postorder" name="postorder"><br><br>
         
         <input type="submit" value="Construir Árbol">
     </form>
-
     <?php
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
-        $recorrido1 = $_POST['recorrido1'];
-        $recorrido2 = $_POST['recorrido2'];
-        $datos1 = explode(',', $_POST['datos1']);
-        $datos2 = explode(',', $_POST['datos2']);
-        
-        
-        $datos1 = array_map('trim', $datos1);
-        $datos2 = array_map('trim', $datos2);
-        
-        
-        $preorden = $inorden = $postorden = [];
-      
-        if ($recorrido1 === 'preorden' && $recorrido2 === 'inorden') {
-            $preorden = $datos1;
-            $inorden = $datos2;
-        } elseif ($recorrido1 === 'preorden' && $recorrido2 === 'postorden') {
-            $preorden = $datos1;
-            $postorden = $datos2;
-            $inorden = generarInordenDesdePreordenYPostorden($preorden, $postorden);
-        } elseif ($recorrido1 === 'inorden' && $recorrido2 === 'preorden') {
-            $inorden = $datos1;
-            $preorden = $datos2;
-        } elseif ($recorrido1 === 'inorden' && $recorrido2 === 'postorden') {
-            $inorden = $datos1;
-            $postorden = $datos2;
-            $preorden = generarPreordenDesdeInordenYPostorden($inorden, $postorden);
-        } elseif ($recorrido1 === 'postorden' && $recorrido2 === 'preorden') {
-            $postorden = $datos1;
-            $preorden = $datos2;
-            $inorden = generarInordenDesdePreordenYPostorden($preorden, $postorden);
-        } elseif ($recorrido1 === 'postorden' && $recorrido2 === 'inorden') {
-            $postorden = $datos1;
-            $inorden = $datos2;
-            $preorden = generarPreordenDesdeInordenYPostorden($inorden, $postorden);
+    class TreeNode {
+        public $value;
+        public $left;
+        public $right;
+        public function __construct($value) {
+            $this->value = $value;
+            $this->left = null;
+            $this->right = null;
         }
-
-       
-        $arbol = new ArbolBinario();
-        $raiz = $arbol->construirArbol($preorden, $inorden);
-
-        
-        $postordenResultado = $arbol->recorridoPostorden($raiz);
-        
-        
-        echo "<h2>Recorrido Postorden:</h2>";
-        echo "<p>" . implode(", ", $postordenResultado) . "</p>";
     }
-    
-   
-    function generarPreordenDesdeInordenYPostorden($inorden, $postorden) {
-        $preorden = [];
-        return $preorden;
+    function buildTreeFromPreIn($preorder, $inorder) {
+        if (empty($preorder) || empty($inorder)) {
+            return null;
+        }
+        // The first element in preorder is the root
+        $rootValue = array_shift($preorder);
+        $root = new TreeNode($rootValue);
+        // Find the index of the root in inorder
+        $inorderIndex = array_search($rootValue, $inorder);
+        
+        // Build left and right subtrees
+        $root->left = buildTreeFromPreIn($preorder, array_slice($inorder, 0, $inorderIndex));
+        $root->right = buildTreeFromPreIn($preorder, array_slice($inorder, $inorderIndex + 1));
+        return $root;
     }
-
-    function generarInordenDesdePreordenYPostorden($preorden, $postorden) {
-        $inorden = [];
-        return $inorden;
+    function buildTreeFromPostIn($postorder, $inorder) {
+        if (empty($postorder) || empty($inorder)) {
+            return null;
+        }
+        // The last element in postorder is the root
+        $rootValue = array_pop($postorder);
+        $root = new TreeNode($rootValue);
+        // Find the index of the root in inorder
+        $inorderIndex = array_search($rootValue, $inorder);
+        
+        // Build right and left subtrees
+        $root->right = buildTreeFromPostIn(array_slice($postorder, $inorderIndex), array_slice($inorder, $inorderIndex + 1));
+        $root->left = buildTreeFromPostIn(array_slice($postorder, 0, $inorderIndex), array_slice($inorder, 0, $inorderIndex));
+        return $root;
+    }
+    function printTree($node, $level = 0) {
+        if ($node === null) {
+            return;
+        }
+        printTree($node->right, $level + 1);
+        echo str_repeat('&nbsp;', 4 * $level) . $node->value . "<br>";
+        printTree($node->left, $level + 1);
+    }
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $preorder = isset($_POST['preorder']) ? explode(',', $_POST['preorder']) : [];
+        $inorder = isset($_POST['inorder']) ? explode(',', $_POST['inorder']) : [];
+        $postorder = isset($_POST['postorder']) ? explode(',', $_POST['postorder']) : [];
+        // Check if at least two traversals are provided
+        if ((count($preorder) > 0 && count($inorder) > 0) || 
+            (count($preorder) > 0 && count($postorder) > 0) || 
+            (count($inorder) > 0 && count($postorder) > 0)) {
+            // Build the tree using pre-order and in-order or post-order and in-order
+            if (count($preorder) > 0 && count($inorder) > 0) {
+                $tree = buildTreeFromPreIn($preorder, $inorder);
+            } elseif (count($postorder) > 0 && count($inorder) > 0) {
+                $tree = buildTreeFromPostIn($postorder, $inorder);
+            } else {
+                echo "<p>Se requiere al menos preorden y enorden o postorden y enorden.</p>";
+                exit;
+            }
+            echo "<h2>Árbol Binario Construido:</h2>";
+            printTree($tree);
+        } else {
+            echo "<p>Por favor, proporcione al menos dos recorridos.</p>";
+        }
     }
     ?>
 </body>
