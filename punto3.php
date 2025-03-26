@@ -18,27 +18,27 @@
         $input = $_POST['numeros'];
         $numeros = array_map('trim', explode(',', $input));
         
-        // Filter to keep only numeric values
+        
         $numeros = array_filter($numeros, function($value) {
             return is_numeric($value);
         });
         // Convert to float
         $numeros = array_map('intval', $numeros);
         if (count($numeros) > 0) {
-            // Calculate average
+            //Promedio
             $promedio = array_sum($numeros) / count($numeros);
-            // Calculate median
+            //Mediana
             sort($numeros);
             $count = count($numeros);
             $media = ($count % 2 == 0) ? ($numeros[$count / 2 - 1] + $numeros[$count / 2]) / 2 : $numeros[floor($count / 2)];
-            // Calculate mode
+            //Moda
             $valores = array_count_values($numeros);
 			
             if (!empty($valores)) {
-                $maxCount = max($valores); // Get the highest count
-                $moda = array_keys($valores, $maxCount); // Get the keys with that count
+                $maxCount = max($valores); 
+                $moda = array_keys($valores, $maxCount); 
             } else {
-                $moda = []; // No valid values for mode
+                $moda = []; 
             }
             echo "<h2>Resultados:</h2>";
             echo "Promedio: " . number_format($promedio, 2) . "<br>";
